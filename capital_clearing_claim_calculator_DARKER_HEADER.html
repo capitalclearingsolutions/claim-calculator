@@ -1,0 +1,195 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Capital Clearing Solutions – Claim Calculator</title>
+<style>
+:root{--teal:#12a7b5;--dark:#087c89;--yellow:#ffc928;--ink:#173847;--bg:#edf7f8;--line:#d7e4e7}
+*{box-sizing:border-box}body{margin:0;font-family:Arial,Helvetica,sans-serif;background:var(--bg);color:var(--ink)}
+header{background:linear-gradient(135deg,#087f90,#10aeb8);color:#fff;padding:18px 20px}header div,.wrap{max-width:1050px;margin:auto}.header-inner{display:flex;align-items:center;justify-content:space-between;gap:30px}h1{margin:0;font-size:34px;line-height:1}.tag{margin-top:6px;font-size:14px;max-width:480px;line-height:1.35}.wrap{margin-top:18px;padding:0 15px 40px}.card{background:#fff;border-radius:18px;padding:25px;box-shadow:0 10px 35px #0002}
+.steps{display:flex;justify-content:space-between;margin-bottom:28px}.step{text-align:center;flex:1;font-size:13px;color:#6d8088}.dot{width:38px;height:38px;border-radius:50%;background:#e3eaec;margin:0 auto 7px;display:flex;align-items:center;justify-content:center;font-weight:bold}.step.active{color:var(--dark);font-weight:bold}.step.active .dot,.step.done .dot{background:var(--teal);color:white}
+.page{display:none}.page.active{display:block}.box{border:1px solid var(--line);border-radius:14px;padding:23px}.box h2{margin-top:0}.sub{color:#61757d}.panel{background:#effafa;border:1px solid #cce9eb;border-radius:12px;padding:17px;margin:16px 0}.company{background:#f8fbfc;border:1px solid var(--line);border-radius:13px;padding:18px;margin-bottom:18px}.company-head,.product-head{display:flex;justify-content:space-between;align-items:center;gap:10px}.product{background:#fff;border:1px solid var(--line);border-radius:10px;padding:15px;margin-top:14px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:15px}.field label{display:block;font-weight:bold;font-size:14px;margin-bottom:6px}.field input,.field select{width:100%;height:45px;border:1px solid #c9d7dc;border-radius:8px;padding:0 12px;font-size:15px;background:white}.hidden{display:none!important}.actions{display:flex;gap:12px;margin-top:22px}.btn{border:0;border-radius:8px;padding:14px 20px;font-size:15px;font-weight:bold;cursor:pointer}.primary{background:var(--yellow);color:#182d35;flex:1}.secondary{background:white;color:var(--dark);border:1px solid var(--teal)}.add{background:var(--teal);color:white;width:100%;margin-top:10px}.remove{background:none;border:0;color:var(--dark);font-weight:bold;cursor:pointer}.total{font-size:26px;color:var(--dark);font-weight:bold}.route{border:1px solid var(--line);border-left:5px solid var(--teal);border-radius:9px;padding:14px;margin:10px 0}.route strong{color:var(--dark)}.notice{font-size:13px;color:#61757d;line-height:1.5}@media(max-width:700px){.grid{grid-template-columns:1fr}h1{font-size:30px}.card{padding:15px}.step{font-size:10px}.dot{width:32px;height:32px}}
+
+.badges{display:flex;gap:18px;justify-content:flex-end;align-items:center;margin:0;font-size:13px;flex-shrink:0}
+.badge{display:flex;gap:9px;align-items:center;font-weight:bold;white-space:nowrap}.badge i{font-style:normal;background:var(--yellow);color:#173847;width:36px;height:36px;border-radius:50%;display:grid;place-items:center;font-size:16px;box-shadow:0 2px 0 #0001}
+.section-title{display:flex;align-items:center;gap:10px}.section-title .num{background:var(--yellow);width:34px;height:34px;border-radius:50%;display:grid;place-items:center}
+.step .dot{border:2px solid #f1d57d}.step.active .dot,.step.done .dot{background:var(--yellow);color:#173847;border-color:var(--yellow)}
+.step.active,.step.done{color:#b87b00}
+.company,.product{border-color:#efd36d}.company-head h3,.product-head b{color:#b77a00}
+.result-layout{display:grid;grid-template-columns:1.25fr .75fr;gap:18px}.estimate-card{border:2px solid var(--yellow);background:linear-gradient(135deg,#fffdf6,#fff8df);border-radius:14px;padding:22px}.estimate-label{font-weight:bold;color:#8b6100}.rolling{font-size:52px;font-weight:800;color:#d89200;letter-spacing:1px;margin:12px 0}.yellow-num{color:#d89200;font-weight:800}
+.entitlement{margin-top:22px;padding:18px;background:#fffdf7;border:1px solid #efd36d;border-radius:14px}.ticks{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.tick{display:flex;gap:9px;align-items:flex-start;font-size:13px}.tick:before{content:'✓';display:grid;place-items:center;flex:0 0 23px;height:23px;border-radius:50%;background:var(--yellow);font-weight:bold}
+.legal{border-left:5px solid var(--yellow);background:#fffdf8;border:1px solid #f0df9e;border-radius:12px;padding:18px;line-height:1.55}.legal h3{margin:0 0 10px;color:#8b6100}.legal h4{margin:18px 0 7px;color:var(--dark)}
+.bottom-benefits{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:18px}.benefit{display:flex;gap:10px;align-items:center;padding:14px;border:1px solid var(--line);border-radius:12px;background:#fff}.benefit i{font-style:normal;background:#fff4c7;width:38px;height:38px;border-radius:50%;display:grid;place-items:center}
+@media(max-width:700px){header{padding:18px 15px}.header-inner{align-items:flex-start;flex-direction:column;gap:14px}.badges{margin:0;justify-content:flex-start;flex-wrap:wrap}.badge{white-space:normal}.result-layout{grid-template-columns:1fr}.ticks{grid-template-columns:1fr}.bottom-benefits{grid-template-columns:1fr 1fr}.rolling{font-size:38px}}
+
+.logo-title-row{display:flex;align-items:center;gap:16px}.logo-wrap{width:150px;height:70px;background:transparent;border-radius:0;padding:0;display:flex;align-items:center;justify-content:flex-start;box-shadow:none;flex:0 0 150px}.logo-wrap img{width:100%;height:100%;object-fit:contain;object-position:left center;display:block;filter:drop-shadow(0 1px 1px rgba(0,0,0,.12))}.brand h1{font-size:38px;margin:0}.brand .tag{margin-top:8px}@media(max-width:700px){.logo-title-row{gap:10px}.logo-wrap{width:105px;height:52px;flex-basis:105px}.brand h1{font-size:30px}}
+</style>
+<style id="text-header-override">.logo-title-row{display:flex;align-items:center;width:100%;margin:0 0 18px}.brand-text{display:flex;align-items:baseline;gap:9px;white-space:nowrap;line-height:1}.company-name{color:#159fa8;font-size:22px;font-weight:800;letter-spacing:.35px}.title-separator{color:#f4c542;font-size:22px;font-weight:700}.calculator-title{color:#f4c542;font-size:22px;font-weight:800}.brand .tag{margin-top:8px}@media(max-width:700px){.brand-text{gap:6px;overflow:hidden}.company-name,.title-separator,.calculator-title{font-size:16px}}</style>
+<style id="darker-company-name">
+.company-name{
+  color:#073b4c !important;
+  font-weight:900 !important;
+  text-shadow:0 1px 0 rgba(255,255,255,.15);
+}
+</style>
+</head>
+<body>
+<header><div class="header-inner"><div class="brand"><div class="logo-title-row"><div class="brand-text"><span class="company-name">CAPITAL CLEARING SOLUTIONS LTD</span><span class="title-separator">|</span><span class="calculator-title">Claim Calculator</span></div></div><div class="tag">Find out if you could be owed compensation for a mis-sold renewable energy product.</div></div><div class="badges"><div class="badge"><i>🔒</i><span>100% Secure<br><small style="font-weight:normal">Your information is safe and confidential.</small></span></div><div class="badge"><i>◷</i><span>Takes 2 Minutes<br><small style="font-weight:normal">Quick assessment with instant results.</small></span></div></div></div></header>
+<main class="wrap"><div class="card">
+<div class="steps"><div class="step active" data-step="1"><div class="dot">1</div>Your Purchases</div><div class="step" data-step="2"><div class="dot">2</div>Additional Details</div><div class="step" data-step="3"><div class="dot">3</div>About the Sale</div><div class="step" data-step="4"><div class="dot">4</div>Results</div></div>
+
+<section class="page active" id="page1"><div class="box"><div class="section-title"><span class="num">1</span><h2>Your Purchases</h2></div><p class="sub">Add as many companies and products as you need. Each purchase is kept separate for assessment.</p><div id="companies"></div><button class="btn secondary" style="width:100%" onclick="addCompany()">＋ Add Another Company</button><div class="panel"><h3>Running total</h3><p>Products: <b id="productCount">0</b></p><p>Purchase value: <b id="purchaseTotal">£0.00</b></p><p>Additional costs: <b id="costTotal">£0.00</b></p><div class="total" id="combinedTotal">£0.00</div></div><div class="actions"><button class="btn primary" onclick="go(2)">Next Step →</button></div><div class="entitlement"><h3>✓ Why You Could Be Entitled To Compensation</h3><div class="ticks">
+<div class="tick">You were told the system would pay for itself or generate income.</div><div class="tick">You were pressured into making a decision.</div><div class="tick">You were given incorrect or misleading information.</div><div class="tick">The product was unsuitable for your circumstances.</div><div class="tick">You were overcharged or hidden costs were added.</div><div class="tick">The company is no longer trading, is insolvent or has gone bust.</div>
+</div></div></div></section>
+
+<section class="page" id="page2"><div class="box"><div class="section-title"><span class="num">2</span><h2>Additional Details</h2></div><p class="sub">Tell us a little more about the purchases.</p><div class="grid"><div class="field"><label>When was the earliest purchase?</label><input id="date" type="date"></div><div class="field"><label>Were you advised to take finance?</label><select id="advised"><option value="">Please select...</option><option>Yes</option><option>No</option><option>Don't know</option></select></div><div class="field"><label>How many years have you had the products?</label><select id="years"><option value="">Please select...</option><option value="1">Less than 1 year</option><option value="3">1–3 years</option><option value="5">4–5 years</option><option value="6">More than 5 years</option></select></div>
+<div class="field"><label>FIT Rate</label><input id="fitRate" type="text" placeholder="Enter FIT rate"></div>
+<div class="field"><label>FIT Per Annum (£)</label><input id="fitPerAnnum" type="number" min="0" step="0.01" placeholder="£"></div>
+<div class="field"><label>Government Grants or Benefits</label><select id="governmentBenefits"><option value="">Please select...</option><option value="Yes">Yes</option><option value="No">No</option><option value="Don't know">Don't know</option></select></div></div><div class="actions"><button class="btn secondary" onclick="go(1)">← Back</button><button class="btn primary" onclick="go(3)">Next Step →</button></div></div></section>
+
+<section class="page" id="page3"><div class="box"><div class="section-title"><span class="num">3</span><h2>About the Sale</h2></div><p class="sub">These answers help personalise the assessment.</p><div class="grid">
+<div class="field"><label>Were you told the system would pay for itself or generate income?</label><select id="income"><option value="">Please select...</option><option>Yes</option><option>No</option><option>Don't remember</option></select></div>
+<div class="field"><label>Was the system described as low-risk or risk-free?</label><select id="risk"><option value="">Please select...</option><option>Yes</option><option>No</option><option>Don't remember</option></select></div>
+<div class="field"><label>Did you feel pressured into deciding?</label><select id="pressure"><option value="">Please select...</option><option>Yes</option><option>No</option></select></div>
+<div class="field"><label>Were important statements inaccurate or misleading?</label><select id="falseStatement"><option value="">Please select...</option><option>Yes</option><option>No</option><option>Don't know</option></select></div>
+<div class="field"><label>Did those statements influence your decision?</label><select id="induced"><option value="">Please select...</option><option>Yes</option><option>No</option><option>Don't know</option></select></div>
+<div class="field"><label>Have you suffered financial loss?</label><select id="loss"><option value="">Please select...</option><option>Yes</option><option>No</option><option>Don't know</option></select></div>
+</div><div class="actions"><button class="btn secondary" onclick="go(2)">← Back</button><button class="btn primary" onclick="results()">See My Results →</button></div></div></section>
+
+<section class="page" id="page4"><div class="box"><div class="section-title"><span class="num">4</span><h2>Your Results</h2></div><p class="sub">Based on the information you entered and the indicators selected.</p>
+<div class="result-layout"><div><div class="estimate-card"><div class="estimate-label">YOUR ESTIMATED POTENTIAL COMPENSATION</div><div class="rolling" id="resultAmount">£0.00</div><p class="notice">This illustrative estimate is calculated from the purchases, costs and assessment indicators you entered. It is not a guaranteed award.</p></div>
+<div class="panel"><h3>Why this estimate was produced</h3><p id="summary"></p></div><h3>Potential claim indicators</h3><div id="routes"></div></div>
+<aside class="legal"><h3>⚖ Important Legal Information</h3><h4>Section 75 – Consumer Credit Act 1974</h4><p>Section 75 can, in certain circumstances, make a credit provider jointly responsible with a supplier for a breach of contract or misrepresentation. It is commonly relevant where there is a qualifying debtor-creditor-supplier arrangement and the cash price of the goods or services falls within the statutory monetary limits.</p><p>If the purchase was made using qualifying credit or qualifying linked finance, and there was a breach of contract or misrepresentation by the supplier, a consumer may have a right to pursue the creditor as well as, or instead of, the supplier. This can be particularly important where the supplier has ceased trading, entered insolvency or is otherwise unable to meet a claim.</p><h4>Misrepresentation Act 1967</h4><p>A misrepresentation may arise where a false statement of fact or law is made and induces someone to enter into a contract. Depending on the circumstances, remedies may include rescission and/or damages. Statements about expected savings, income, performance, suitability or payback can be relevant if they were false or misleading and materially influenced the decision to buy.</p><p>Your answers are used to highlight these potential routes, but the facts, contract, transaction structure and available evidence determine whether a legal claim exists.</p></aside></div>
+<div class="bottom-benefits"><div class="benefit"><i>£</i><span><b>No Hidden Fees</b><br><small>Transparent information about the service.</small></span></div><div class="benefit"><i>◉</i><span><b>Expert Support</b><br><small>Guidance throughout your assessment.</small></span></div><div class="benefit"><i>✓</i><span><b>Clear Process</b><br><small>We explain each stage clearly.</small></span></div><div class="benefit"><i>🛡</i><span><b>Trusted & Reliable</b><br><small>Your claim is our priority.</small></span></div></div>
+<div class="actions"><button class="btn secondary" onclick="go(3)">← Back</button><button class="btn primary" onclick="location.reload()">Start Again</button></div></div></section>
+</div></main>
+
+<script>
+let companyNo=0;
+
+function addCompany(){
+ companyNo++;
+ const id=companyNo;
+ const c=document.getElementById('companies');
+ const div=document.createElement('div');
+ div.className='company'; div.id='company'+id;
+ div.innerHTML='<div class="company-head"><h3>Company '+id+'</h3>'+(id>1?'<button class="remove" onclick="removeCompany('+id+')">Remove Company</button>':'')+'</div><div class="grid"><div class="field"><label>Company name</label><input class="company-name" placeholder="Enter company name"></div><div class="field"><label>Company status</label><select class="company-status"><option value="">Please select...</option><option>Still trading</option><option>In liquidation</option><option>In administration</option><option>Dissolved / struck off</option><option>Don\'t know</option></select></div></div><div class="products"></div><button class="btn add" onclick="addProduct('+id+')">＋ Add Another Product</button>';
+ c.appendChild(div); addProduct(id); updateTotals();
+}
+function removeCompany(id){const x=document.getElementById('company'+id);if(x)x.remove();updateTotals()}
+function addProduct(id){
+ const products=document.querySelector('#company'+id+' .products');
+ const n=products.querySelectorAll('.product').length+1;
+ const d=document.createElement('div');d.className='product';
+ d.innerHTML='<div class="product-head"><b>Product '+n+'</b>'+(n>1?'<button class="remove" onclick="removeProduct(this)">Remove</button>':'')+'</div><div class="grid"><div class="field"><label>Product</label><select class="product-type"><option value="">Please select...</option><option>Solar panels</option><option>Battery storage</option><option>Heat pump</option><option>Spray foam insulation</option><option>Other renewable product</option></select></div><div class="field"><label>Purchase amount (£)</label><input class="purchase" type="number" min="0" placeholder="£" oninput="updateTotals()"></div><div class="field"><label>Additional costs (£)</label><input class="cost" type="number" min="0" placeholder="£" oninput="updateTotals()"></div><div class="field"><label>Payment method</label><select class="payment" onchange="financeToggle(this)"><option value="">Please select...</option><option>Cash / bank transfer</option><option>Credit card</option><option>Finance</option><option>Other</option></select></div></div><div class="finance hidden"><div class="panel"><h3>Finance details</h3><div class="grid"><div class="field"><label>Type of finance</label><select class="finance-type"><option value="">Please select...</option><option>Point-of-sale finance / arranged by seller</option><option>Personal / bank loan</option><option>Other finance</option></select></div><div class="field"><label>Amount financed (£)</label><input class="finance-amount" type="number" min="0" placeholder="£"></div><div class="field"><label>Finance provider</label><input class="finance-provider" placeholder="Enter provider"></div><div class="field"><label>Was finance arranged as part of the purchase?</label><select class="linked"><option value="">Please select...</option><option>Yes</option><option>No</option><option>Don\'t know</option></select></div></div></div></div>';
+ products.appendChild(d);updateTotals();
+}
+function removeProduct(btn){btn.closest('.product').remove();updateTotals()}
+function financeToggle(s){const f=s.closest('.product').querySelector('.finance');const on=s.value==='Finance';f.classList.toggle('hidden',!on);if(!on)f.querySelectorAll('input,select').forEach(x=>x.value='')}
+function updateTotals(){let p=0,c=0,n=0;document.querySelectorAll('.product').forEach(x=>{n++;p+=Number(x.querySelector('.purchase').value)||0;c+=Number(x.querySelector('.cost').value)||0});const fmt=x=>'£'+x.toLocaleString('en-GB',{minimumFractionDigits:2,maximumFractionDigits:2});document.getElementById('productCount').textContent=n;document.getElementById('purchaseTotal').textContent=fmt(p);document.getElementById('costTotal').textContent=fmt(c);document.getElementById('combinedTotal').textContent=fmt(p+c)}
+function go(n){document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));document.getElementById('page'+n).classList.add('active');document.querySelectorAll('.step').forEach(x=>{let s=Number(x.dataset.step);x.classList.toggle('active',s===n);x.classList.toggle('done',s<n)});window.scrollTo({top:0,behavior:'smooth'})}
+function animateMoney(id,target){const el=document.getElementById(id);const start=performance.now(),dur=1400;function tick(now){const p=Math.min((now-start)/dur,1);const eased=1-Math.pow(1-p,4);const value=target*eased;el.textContent='£'+value.toLocaleString('en-GB',{minimumFractionDigits:2,maximumFractionDigits:2});if(p<1)requestAnimationFrame(tick)}requestAnimationFrame(tick)}
+function results(){
+ const years=Math.max(1,Number(document.getElementById('years').value)||1);
+ const misrep=document.getElementById('falseStatement').value==='Yes';
+ const induced=document.getElementById('induced').value==='Yes';
+ const loss=document.getElementById('loss').value==='Yes';
+ const income=document.getElementById('income').value==='Yes';
+ const pressure=document.getElementById('pressure').value==='Yes';
+ const risk=document.getElementById('risk').value==='Yes';
+
+ let spent=0, estimate=0, productCount=0;
+ let s75Count=0, misrepCount=0, companyIssue=false;
+ const routes=[];
+
+ document.querySelectorAll('.company-status').forEach(x=>{
+   if(['In liquidation','In administration','Dissolved / struck off'].includes(x.value)) companyIssue=true;
+ });
+
+ document.querySelectorAll('.product').forEach(card=>{
+   productCount++;
+   const purchase=Math.max(0,Number(card.querySelector('.purchase').value)||0);
+   const cost=Math.max(0,Number(card.querySelector('.cost').value)||0);
+   const base=purchase+cost;
+   spent+=base;
+
+   const payment=card.querySelector('.payment').value;
+   const linked=card.querySelector('.linked') ? card.querySelector('.linked').value==='Yes' : false;
+
+   // Section 75 screening is done per product, because payment and purchase
+   // values may differ across multiple purchases.
+   const s75Price=purchase>100 && purchase<=30000;
+   const s75Credit=(payment==='Credit card') || (payment==='Finance' && linked);
+   const supplierIssue=misrep || income || risk;
+
+   let productStrength=0;
+   if(misrep && induced && loss) productStrength+=2;
+   else if(misrep || income || risk) productStrength+=1;
+   if(pressure) productStrength+=1;
+
+   if(s75Price && s75Credit && supplierIssue){
+     s75Count++;
+     productStrength+=2;
+   }
+
+   // Illustrative estimate:
+   // strong screening indicators: base + 8% simple-interest illustration
+   // moderate indicators: proportion of base + reduced illustrative interest
+   // no indicators: no compensation estimate for that product
+   let productEstimate=0;
+   if(productStrength>=3){
+      productEstimate=base + (base*0.08*years);
+   }else if(productStrength>=1){
+      productEstimate=(base*0.5) + (base*0.08*years*0.5);
+   }
+   estimate+=productEstimate;
+ });
+
+ if(s75Count>0){
+   routes.push(['SECTION 75 — POTENTIAL ROUTE IDENTIFIED',
+   s75Count+' purchase(s) show indicators consistent with a potential Section 75 route, including the purchase value, use of credit or linked finance, and a possible supplier issue.']);
+ }else{
+   routes.push(['SECTION 75 — NO INDICATOR IDENTIFIED FROM CURRENT ANSWERS',
+   'None of the purchases currently meet all of the screening indicators used by this calculator. This does not rule out another remedy or mean a Section 75 assessment is impossible if further transaction information is available.']);
+ }
+
+ if(misrep && induced && loss){
+   misrepCount=productCount;
+   routes.push(['MISREPRESENTATION — STRONG INDICATORS',
+   'You indicated that important statements were inaccurate or misleading, that those statements influenced your decision, and that you suffered financial loss. These are significant indicators for a detailed misrepresentation assessment.']);
+ }else if(misrep || income || risk){
+   routes.push(['MISREPRESENTATION — POTENTIAL INDICATORS',
+   'Your answers indicate that statements about the purchase, performance, income or risk may warrant a closer review alongside quotations, sales documents and other evidence.']);
+ }else{
+   routes.push(['MISREPRESENTATION — NOT ESTABLISHED FROM THE CURRENT ANSWERS',
+   'The answers currently provided do not establish the main indicators used by this screening tool.']);
+ }
+
+ if(pressure){
+   routes.push(['PRESSURE SELLING — SUPPORTING INDICATOR',
+   'You indicated that you felt pressured when deciding to purchase. This can be relevant when considered alongside the full sales process and supporting evidence.']);
+ }
+
+ if(companyIssue){
+   routes.push(['COMPANY STATUS — POTENTIAL CLAIM INDICATOR',
+   'At least one company has been identified as in liquidation, administration or dissolved. Where a supplier is unable to meet its obligations, the payment method and circumstances of the sale can become particularly important when considering potential routes to recovery.']);
+ }
+
+ animateMoney('resultAmount',estimate);
+ document.querySelector('.estimate-card .notice').textContent=
+   'Estimated potential compensation based on the purchases and answers entered. This is an illustrative estimate, not a guaranteed award.';
+
+ document.getElementById('routes').innerHTML=routes.map(r=>'<div class="route"><strong>'+r[0]+'</strong><p>'+r[1]+'</p></div>').join('');
+
+ const fmt=x=>'£'+x.toLocaleString('en-GB',{minimumFractionDigits:2,maximumFractionDigits:2});
+ document.getElementById('summary').innerHTML=
+   'You entered <b>'+productCount+'</b> product(s) with a combined spend of <b>'+fmt(spent)+'</b>. '
+   +'Based on the assessment indicators selected, the calculator produced an illustrative potential compensation estimate of <b>'+fmt(estimate)+'</b>. '
+   +'Each product is assessed separately because payment method, purchase value and potential claim routes may differ.';
+
+ go(4);
+}
+document.addEventListener('DOMContentLoaded',addCompany);
+</script>
+</body></html>
